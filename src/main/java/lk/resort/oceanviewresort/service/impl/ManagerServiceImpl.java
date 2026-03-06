@@ -81,6 +81,12 @@ public class ManagerServiceImpl implements ManagerService {
 
         return null;
     }
+
+    @Override
+    public ReservationListResponseDTO getAllReservations(String searchQuery) {
+        return null;
+    }
+
     @Override
     public IncomeReportResponseDTO generateIncomeReport(IncomeReportRequestDTO request) {
         double totalIncome = 0.0;
