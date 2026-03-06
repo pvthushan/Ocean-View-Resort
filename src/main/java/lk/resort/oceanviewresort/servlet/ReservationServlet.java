@@ -60,10 +60,10 @@ public class ReservationServlet extends HttpServlet {
         ViewReservationResponseDTO responseDTO = receptionService.getReservationDetails(reservationId);
 
         if (responseDTO != null) {
-            resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
+            resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(gson.toJson(responseDTO));
         } else {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().write("{\"error\": \"Reservation not found.\"}");
         }
     }
