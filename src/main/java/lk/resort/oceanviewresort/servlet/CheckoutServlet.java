@@ -2,6 +2,7 @@ package lk.resort.oceanviewresort.servlet;
 
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import lk.resort.oceanviewresort.service.impl.ReceptionServiceImpl;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+@WebServlet("/api/v1/reception/checkout")
 public class CheckoutServlet extends HttpServlet {
     private ReceptionService receptionService = new ReceptionServiceImpl();
     private Gson gson = new Gson();
