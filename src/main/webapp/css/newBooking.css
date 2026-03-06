@@ -1,0 +1,85 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    overflow-x: hidden;
+}
+
+:root {
+    --ocean-blue: #0077b6;
+    --ocean-dark: #023e8a;
+}
+
+.bg-ocean {
+    background-color: var(--ocean-blue) !important;
+    height: 60px;
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.text-dark-blue {
+    color: var(--ocean-dark);
+}
+
+.main-content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    background-color: #fff;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #e0e0e0;
+    color: #6c757d;
+}
+
+.form-control, .form-select {
+    border-color: #e0e0e0;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--ocean-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 119, 182, 0.15);
+}
+
+.form-label {
+    margin-bottom: 0.4rem;
+    color: #495057;
+}
+
+.btn-success {
+    background-color: #2a9d8f;
+    border-color: #2a9d8f;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #21867a;
+    border-color: #21867a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+}
