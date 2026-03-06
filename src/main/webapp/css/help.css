@@ -1,0 +1,125 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    color: #495057;
+}
+
+:root {
+    --ocean-blue: #0077b6;
+    --ocean-dark: #023e8a;
+    --ocean-light: #caf0f8;
+}
+
+.bg-ocean {
+    background-color: var(--ocean-blue) !important;
+    height: 60px;
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.text-dark-blue {
+    color: var(--ocean-dark);
+}
+
+.border-ocean {
+    border-color: var(--ocean-blue) !important;
+}
+
+.bg-ocean-light {
+    background-color: var(--ocean-light) !important;
+}
+
+.main-content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.sidebar-link {
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover {
+    background-color: #e9ecef;
+    color: var(--ocean-blue);
+}
+
+.sidebar-link.active {
+    background-color: var(--ocean-light);
+    color: var(--ocean-blue);
+    border-left-color: var(--ocean-blue);
+    font-weight: 600;
+}
+
+.accordion-button {
+    background-color: #fff;
+    color: var(--ocean-dark);
+    font-size: 1.1rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--ocean-light);
+    color: var(--ocean-blue);
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@media print {
+    .navbar, .sidebar-link, .btn, nav[aria-label="breadcrumb"] {
+        display: none !important;
+    }
+
+    .main-content-wrapper {
+        padding-top: 0;
+        background-color: white;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .accordion-button {
+        background-color: white !important;
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .accordion-collapse {
+        display: block !important;
+    }
+
+    .accordion-body {
+        display: block !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .sticky-top {
+        position: static !important;
+    }
+}
