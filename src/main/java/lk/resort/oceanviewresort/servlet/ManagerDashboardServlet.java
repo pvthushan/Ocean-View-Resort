@@ -27,10 +27,10 @@ public class ManagerDashboardServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         if (statsDTO != null) {
-            resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
+            resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(gson.toJson(statsDTO));
         } else {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Server Error
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\": \"Failed to load dashboard statistics.\"}");
         }
     }
