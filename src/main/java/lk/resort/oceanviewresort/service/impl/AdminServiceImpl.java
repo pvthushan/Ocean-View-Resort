@@ -1,10 +1,7 @@
 package lk.resort.oceanviewresort.service.impl;
 
 import lk.resort.oceanviewresort.db.DBConnection;
-import lk.resort.oceanviewresort.dto.AddUserRequestDTO;
-import lk.resort.oceanviewresort.dto.AddUserResponseDTO;
-import lk.resort.oceanviewresort.dto.UserDTO;
-import lk.resort.oceanviewresort.dto.UserListResponseDTO;
+import lk.resort.oceanviewresort.dto.*;
 import lk.resort.oceanviewresort.service.AdminService;
 
 import java.sql.Connection;
@@ -79,6 +76,40 @@ public class AdminServiceImpl implements AdminService {
             }
 
             return new UserListResponseDTO(totalRecords, usersList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public DeleteUserResponseDTO deleteUser(int userId) {
+        String getUsernameQuery = "SELECT username FROM Users WHERE user_id = ?";
+        String deleteQuery = "DELETE FROM Users WHERE user_id = ?";
+
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement getUsernameStmt = conn.prepareStatement(getUsernameQuery);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery)) {
+
+            String username = null;
+            getUsernameStmt.setInt(1, userId);
+            ResultSet rs = getUsernameStmt.executeQuery();
+            if (rs.next()) {
+                username = rs.getString("username");
+            }
+
+            if (username == null) {
+                return null;
+            }
+
+            deleteStmt.setInt(1, userId);
+            int affectedRows = deleteStmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                return new DeleteUserResponseDTO("User " + username + " has been deleted.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
