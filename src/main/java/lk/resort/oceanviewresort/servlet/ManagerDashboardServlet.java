@@ -6,37 +6,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.resort.oceanviewresort.dto.IncomeReportRequestDTO;
-import lk.resort.oceanviewresort.dto.IncomeReportResponseDTO;
+import lk.resort.oceanviewresort.dto.DashboardStatsResponseDTO;
 import lk.resort.oceanviewresort.service.ManagerService;
 import lk.resort.oceanviewresort.service.impl.ManagerServiceImpl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
-@WebServlet("/api/v1/manager/reports/income")
-public class IncomeReportServlet extends HttpServlet {
+@WebServlet("/api/v1/manager/dashboard/stats")
+public class ManagerDashboardServlet extends HttpServlet {
 
     private ManagerService managerService = new ManagerServiceImpl();
     private Gson gson = new Gson();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        BufferedReader reader = req.getReader();
-        IncomeReportRequestDTO reportRequest = gson.fromJson(reader, IncomeReportRequestDTO.class);
-
-        IncomeReportResponseDTO responseDTO = managerService.generateIncomeReport(reportRequest);
+        DashboardStatsResponseDTO statsDTO = managerService.getDashboardStats();
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        if (responseDTO != null) {
+        if (statsDTO != null) {
             resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
-            resp.getWriter().write(gson.toJson(responseDTO));
+            resp.getWriter().write(gson.toJson(statsDTO));
         } else {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Server Error
-            resp.getWriter().write("{\"error\": \"Failed to generate income report.\"}");
+            resp.getWriter().write("{\"error\": \"Failed to load dashboard statistics.\"}");
         }
     }
 }
+
