@@ -1,0 +1,138 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f6f9;
+    overflow-x: hidden;
+}
+
+:root {
+    --ocean-blue: #0077b6;
+    --ocean-dark: #023e8a;
+    --ocean-light: #caf0f8;
+    --sidebar-bg: #023e8a;
+}
+
+.bg-ocean {
+    background-color: var(--ocean-blue) !important;
+    height: 60px;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: var(--sidebar-bg);
+    color: #fff;
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 0 10px;
+    transition: all 0.2s ease;
+}
+
+#sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#page-content-wrapper {
+    margin-left: 250px;
+    width: 100%;
+    transition: all 0.3s;
+    padding-top: 80px;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    background-color: #fff;
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.text-dark-blue {
+    color: var(--ocean-dark);
+}
+
+.btn-ocean {
+    background-color: var(--ocean-blue);
+    border-color: var(--ocean-blue);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-ocean:hover {
+    background-color: var(--ocean-dark);
+    border-color: var(--ocean-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
+}
+
+.form-control, .form-select {
+    border: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--ocean-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 119, 182, 0.15);
+    background-color: #fff;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+    transition: color 0.2s;
+    top: 22px;
+}
+
+.password-toggle:hover {
+    color: var(--ocean-blue);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@media (max-width: 992px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #page-content-wrapper {
+        margin-left: 0;
+    }
+    #wrapper.toggled #sidebar {
+        margin-left: 0;
+    }
+    #wrapper.toggled::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+    }
+}
