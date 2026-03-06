@@ -84,6 +84,45 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ReservationListResponseDTO getAllReservations(String searchQuery) {
+        List<ReservationDTO> reservationList = new ArrayList<>();
+
+        String query = "SELECT r.reservation_code, g.full_name, rt.type_name, r.check_in_date, r.check_out_date, r.status " +
+                "FROM Reservations r " +
+                "JOIN Guests g ON r.guest_id = g.guest_id " +
+                "JOIN RoomTypes rt ON r.room_type_id = rt.room_type_id " +
+                "WHERE g.full_name LIKE ? OR r.reservation_code LIKE ? " +
+                "ORDER BY r.created_at DESC";
+
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+
+            String searchPattern = (searchQuery != null && !searchQuery.trim().isEmpty())
+                    ? "%" + searchQuery.trim() + "%"
+                    : "%";
+
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                reservationList.add(new ReservationDTO(
+                        rs.getString("reservation_code"),
+                        rs.getString("full_name"),
+                        rs.getString("type_name"),
+                        rs.getString("check_in_date"),
+                        rs.getString("check_out_date"),
+                        rs.getString("status")
+                ));
+            }
+
+            return new ReservationListResponseDTO(reservationList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
