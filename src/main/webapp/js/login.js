@@ -49,9 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 password: password
             };
 
-            // Use a relative API path so the client works regardless of the deployed war name/context.
-            // A leading './' makes this relative to the current document location (i.e. the webapp root).
-            // Use APP_CONTEXT_PATH (set in index.jsp) if available to build an absolute path.
+
             const base = (typeof APP_CONTEXT_PATH !== 'undefined' && APP_CONTEXT_PATH) ? APP_CONTEXT_PATH : '.';
             const API_URL = `${base}/api/v1/auth/login`;
 
@@ -83,13 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => {
                         const role = data.user.role;
 
-                        // Redirect to the server-rendered JSP pages that exist in the project.
                         if (role === 'Admin') {
                             window.location.href = `${base}/adminDashboard.jsp`;
                         } else if (role === 'Manager') {
                             window.location.href = `${base}/managerDashboard.jsp`;
                         } else if (role === 'Receptionist') {
-                            // Fixed: redirect to the correctly named `receptionDashboard.jsp` (typo previously).
                             window.location.href = `${base}/receptionDashboard.jsp`;
                         } else {
                             showAlert('Unknown role detected!', 'danger');
