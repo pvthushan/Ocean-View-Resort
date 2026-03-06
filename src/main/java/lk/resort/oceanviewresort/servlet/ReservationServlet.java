@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.resort.oceanviewresort.dto.CreateReservationRequestDTO;
 import lk.resort.oceanviewresort.dto.CreateReservationResponseDTO;
+import lk.resort.oceanviewresort.dto.ViewReservationResponseDTO;
 import lk.resort.oceanviewresort.service.ReceptionService;
 import lk.resort.oceanviewresort.service.impl.ReceptionServiceImpl;
 
@@ -37,6 +38,33 @@ public class ReservationServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\": \"Failed to create reservation. Please check your data.\"}");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String pathInfo = req.getPathInfo();
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        if (pathInfo == null || pathInfo.equals("/")) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"error\": \"Reservation ID is required in the URL.\"}");
+            return;
+        }
+
+        String reservationId = pathInfo.substring(1);
+
+        ViewReservationResponseDTO responseDTO = receptionService.getReservationDetails(reservationId);
+
+        if (responseDTO != null) {
+            resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
+            resp.getWriter().write(gson.toJson(responseDTO));
+        } else {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+            resp.getWriter().write("{\"error\": \"Reservation not found.\"}");
         }
     }
 }

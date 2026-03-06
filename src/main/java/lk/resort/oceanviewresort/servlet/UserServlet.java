@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.resort.oceanviewresort.dto.AddUserRequestDTO;
 import lk.resort.oceanviewresort.dto.AddUserResponseDTO;
+import lk.resort.oceanviewresort.dto.DeleteUserResponseDTO;
 import lk.resort.oceanviewresort.dto.UserListResponseDTO;
 import lk.resort.oceanviewresort.service.AdminService;
 import lk.resort.oceanviewresort.service.impl.AdminServiceImpl;
@@ -68,6 +69,39 @@ public class UserServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\": \"Failed to retrieve users.\"}");
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String pathInfo = req.getPathInfo();
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        if (pathInfo == null || pathInfo.equals("/")) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"error\": \"User ID is required.\"}");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(pathInfo.substring(1));
+
+            DeleteUserResponseDTO responseDTO = adminService.deleteUser(userId);
+
+            if (responseDTO != null) {
+                resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
+                resp.getWriter().write(gson.toJson(responseDTO));
+            } else {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+                resp.getWriter().write("{\"error\": \"User not found.\"}");
+            }
+
+        } catch (NumberFormatException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"error\": \"Invalid User ID format.\"}");
         }
     }
 }

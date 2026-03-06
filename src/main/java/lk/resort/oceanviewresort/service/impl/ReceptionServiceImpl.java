@@ -81,6 +81,48 @@ public class ReceptionServiceImpl implements ReceptionService {
     }
 
     @Override
+    public ViewReservationResponseDTO getReservationDetails(String reservationId) {
+        String query = "SELECT r.reservation_code, r.status, g.full_name, g.contact_number, " +
+                "rt.type_name, r.check_in_date, r.check_out_date " +
+                "FROM Reservations r " +
+                "JOIN Guests g ON r.guest_id = g.guest_id " +
+                "JOIN RoomTypes rt ON r.room_type_id = rt.room_type_id " +
+                "WHERE r.reservation_code = ?";
+
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, reservationId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                GuestDetailsDTO guest = new GuestDetailsDTO(
+                        rs.getString("full_name"),
+                        rs.getString("contact_number")
+                );
+
+                BookingDetailsDTO booking = new BookingDetailsDTO(
+                        rs.getString("type_name"),
+                        rs.getString("check_in_date"),
+                        rs.getString("check_out_date")
+                );
+
+                return new ViewReservationResponseDTO(
+                        rs.getString("reservation_code"),
+                        rs.getString("status"),
+                        guest,
+                        booking
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
     public CheckoutResponseDTO processCheckout(CheckoutRequestDTO request) {
         Connection conn = null;
         try {

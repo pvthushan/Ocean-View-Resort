@@ -1,12 +1,10 @@
 package lk.resort.oceanviewresort.service;
 
-import lk.resort.oceanviewresort.dto.CheckoutRequestDTO;
-import lk.resort.oceanviewresort.dto.CheckoutResponseDTO;
-import lk.resort.oceanviewresort.dto.CreateReservationRequestDTO;
-import lk.resort.oceanviewresort.dto.CreateReservationResponseDTO;
+import lk.resort.oceanviewresort.dto.*;
 
 public interface ReceptionService {
     CreateReservationResponseDTO createReservation(CreateReservationRequestDTO request);
+    ViewReservationResponseDTO getReservationDetails(String reservationId);
     CheckoutResponseDTO processCheckout(CheckoutRequestDTO request);
 
 }

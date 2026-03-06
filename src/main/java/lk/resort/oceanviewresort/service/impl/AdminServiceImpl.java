@@ -84,5 +84,39 @@ public class AdminServiceImpl implements AdminService {
         return null;
     }
 
+    @Override
+    public DeleteUserResponseDTO deleteUser(int userId) {
+        String getUsernameQuery = "SELECT username FROM Users WHERE user_id = ?";
+        String deleteQuery = "DELETE FROM Users WHERE user_id = ?";
+
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement getUsernameStmt = conn.prepareStatement(getUsernameQuery);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery)) {
+
+            String username = null;
+            getUsernameStmt.setInt(1, userId);
+            ResultSet rs = getUsernameStmt.executeQuery();
+            if (rs.next()) {
+                username = rs.getString("username");
+            }
+
+            if (username == null) {
+                return null;
+            }
+
+            deleteStmt.setInt(1, userId);
+            int affectedRows = deleteStmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                return new DeleteUserResponseDTO("User " + username + " has been deleted.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
 }
