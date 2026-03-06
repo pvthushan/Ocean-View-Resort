@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.resort.oceanviewresort.dto.AddUserRequestDTO;
 import lk.resort.oceanviewresort.dto.AddUserResponseDTO;
+import lk.resort.oceanviewresort.dto.UserListResponseDTO;
 import lk.resort.oceanviewresort.service.AdminService;
 import lk.resort.oceanviewresort.service.impl.AdminServiceImpl;
 
@@ -37,6 +38,36 @@ public class UserServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"error\": \"Failed to create user. Username might already exist.\"}");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        int page = 1;
+        int limit = 10;
+
+        String pageParam = req.getParameter("page");
+        String limitParam = req.getParameter("limit");
+
+        if (pageParam != null && !pageParam.isEmpty()) {
+            page = Integer.parseInt(pageParam);
+        }
+        if (limitParam != null && !limitParam.isEmpty()) {
+            limit = Integer.parseInt(limitParam);
+        }
+
+        UserListResponseDTO responseDTO = adminService.getAllUsers(page, limit);
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        if (responseDTO != null) {
+            resp.setStatus(HttpServletResponse.SC_OK); // 200 OK
+            resp.getWriter().write(gson.toJson(responseDTO));
+        } else {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\": \"Failed to retrieve users.\"}");
         }
     }
 }

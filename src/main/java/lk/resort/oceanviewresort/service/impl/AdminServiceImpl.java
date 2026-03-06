@@ -3,12 +3,16 @@ package lk.resort.oceanviewresort.service.impl;
 import lk.resort.oceanviewresort.db.DBConnection;
 import lk.resort.oceanviewresort.dto.AddUserRequestDTO;
 import lk.resort.oceanviewresort.dto.AddUserResponseDTO;
+import lk.resort.oceanviewresort.dto.UserDTO;
+import lk.resort.oceanviewresort.dto.UserListResponseDTO;
 import lk.resort.oceanviewresort.service.AdminService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminServiceImpl implements AdminService {
 
@@ -36,6 +40,46 @@ public class AdminServiceImpl implements AdminService {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public UserListResponseDTO getAllUsers(int page, int limit) {
+        List<UserDTO> usersList = new ArrayList<>();
+        int totalRecords = 0;
+
+        int offset = (page - 1) * limit;
+
+        String countQuery = "SELECT COUNT(*) FROM Users";
+        String dataQuery = "SELECT user_id, username, role FROM Users LIMIT ? OFFSET ?";
+
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement countStmt = conn.prepareStatement(countQuery);
+             PreparedStatement dataStmt = conn.prepareStatement(dataQuery)) {
+
+            ResultSet countRs = countStmt.executeQuery();
+            if (countRs.next()) {
+                totalRecords = countRs.getInt(1);
+            }
+
+            dataStmt.setInt(1, limit);
+            dataStmt.setInt(2, offset);
+            ResultSet dataRs = dataStmt.executeQuery();
+
+            while (dataRs.next()) {
+                usersList.add(new UserDTO(
+                        dataRs.getInt("user_id"),
+                        dataRs.getString("username"),
+                        dataRs.getString("role")
+                ));
+            }
+
+            return new UserListResponseDTO(totalRecords, usersList);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
