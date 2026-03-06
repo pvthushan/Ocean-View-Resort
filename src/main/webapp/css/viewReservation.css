@@ -1,0 +1,115 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    overflow-x: hidden;
+}
+
+:root {
+    --ocean-blue: #0077b6;
+    --ocean-dark: #023e8a;
+}
+
+.bg-ocean {
+    background-color: var(--ocean-blue) !important;
+    height: 60px;
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.text-dark-blue {
+    color: var(--ocean-dark);
+}
+
+.main-content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #e0e0e0;
+}
+
+.form-control:focus {
+    border-color: var(--ocean-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 119, 182, 0.15);
+}
+
+.btn-ocean {
+    background-color: var(--ocean-blue);
+    border-color: var(--ocean-blue);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-ocean:hover {
+    background-color: var(--ocean-dark);
+    border-color: var(--ocean-dark);
+    color: white;
+}
+
+#detailsCard {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 119, 182, 0.1);
+}
+
+#detailsCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 119, 182, 0.15) !important;
+}
+
+.icon-box {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 119, 182, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.slide-up {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@media print {
+    .navbar, .btn, .form-control, .input-group, hr {
+        display: none !important;
+    }
+    .main-content-wrapper {
+        padding-top: 0;
+    }
+    #detailsCard {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    body {
+        background-color: white;
+    }
+}
+
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group .form-control {
+        border-bottom: 1px solid #e0e0e0;
+        border-right: 1px solid #e0e0e0;
+        margin-bottom: 10px;
+    }
+    .btn-ocean {
+        width: 100%;
+    }
+}
