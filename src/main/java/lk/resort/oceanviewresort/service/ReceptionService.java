@@ -6,5 +6,7 @@ import lk.resort.oceanviewresort.dto.CreateReservationRequestDTO;
 import lk.resort.oceanviewresort.dto.CreateReservationResponseDTO;
 
 public interface ReceptionService {
+    CreateReservationResponseDTO createReservation(CreateReservationRequestDTO request);
     CheckoutResponseDTO processCheckout(CheckoutRequestDTO request);
+
 }
