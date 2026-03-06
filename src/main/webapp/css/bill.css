@@ -1,0 +1,127 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    overflow-x: hidden;
+}
+
+:root {
+    --ocean-blue: #0077b6;
+    --ocean-dark: #023e8a;
+    --success-green: #2a9d8f;
+}
+
+.bg-ocean {
+    background-color: var(--ocean-blue) !important;
+    height: 60px;
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.text-dark-blue {
+    color: var(--ocean-dark);
+}
+
+.main-content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #e0e0e0;
+}
+
+.form-control:focus {
+    border-color: var(--ocean-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 119, 182, 0.15);
+}
+
+.btn-ocean {
+    background-color: var(--ocean-blue);
+    border-color: var(--ocean-blue);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-ocean:hover {
+    background-color: var(--ocean-dark);
+    border-color: var(--ocean-dark);
+    color: white;
+}
+
+#invoiceCard {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 119, 182, 0.1);
+}
+
+#invoiceCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0, 119, 182, 0.15) !important;
+}
+
+.table > :not(caption) > * > * {
+    padding: 0.75rem 1rem;
+    border-bottom-width: 1px;
+}
+
+#displayTotal {
+    text-shadow: 0 2px 4px rgba(42, 157, 143, 0.2);
+    transition: transform 0.2s;
+}
+
+#displayTotal:hover {
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.slide-up {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@media print {
+    .navbar, .btn, .form-control, .input-group, hr, .form-text, label[for="resIdInput"] {
+        display: none !important;
+    }
+    .main-content-wrapper {
+        padding-top: 0;
+        background-color: white;
+    }
+    #invoiceCard {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    body {
+        background-color: white;
+    }
+    .text-ocean, .text-dark-blue, .text-success {
+        color: #000 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group .form-control {
+        border-bottom: 1px solid #e0e0e0;
+        border-right: 1px solid #e0e0e0;
+        margin-bottom: 10px;
+    }
+    .btn-ocean {
+        width: 100%;
+    }
+    .table-responsive {
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+}
