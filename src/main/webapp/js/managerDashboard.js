@@ -45,14 +45,33 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const confirmLogout = confirm("Are you sure you want to logout of the Manager Portal?");
-            if (confirmLogout) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('username');
-                localStorage.removeItem('userId');
-                window.location.href = 'index.jsp';
-            }
+
+            Swal.fire({
+                title: 'Ready to Leave?',
+                text: 'Are you sure you want to logout of the Manager Portal?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#0077b6',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userId');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logged Out',
+                        text: 'You have been successfully logged out.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.jsp';
+                    });
+                }
+            });
         });
     }
 
@@ -65,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                // 'Authorization': 'Bearer ' + token
             }
         })
             .then(response => {
@@ -83,10 +101,18 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error("Failed to load dashboard data:", error);
+
                 document.getElementById('checkinsCounter').innerHTML = '<span class="text-danger fs-5">Error</span>';
                 document.getElementById('availableCounter').innerHTML = '<span class="text-danger fs-5">Error</span>';
                 document.getElementById('occupancyCounter').innerHTML = '<span class="text-danger fs-5">Error</span>';
                 document.getElementById('recentActivityTableBody').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load recent activity.</td></tr>';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Connection Failed',
+                    text: 'Could not load dashboard statistics. Please check your backend connection.',
+                    confirmButtonColor: '#0077b6'
+                });
             });
     }
 

@@ -1,3 +1,8 @@
+// Small wrapper to provide a global `showAlert(message, type)` function
+// that maps existing calls to SweetAlert2. Keeps the same simple API
+// used across the project (message, type) where type can be 'success',
+// 'dan
+
 
 (function() {
     if (typeof Swal === 'undefined') {

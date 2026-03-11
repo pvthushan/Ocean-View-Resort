@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if(tableBody) {
         tableBody.addEventListener('click', function (e) {
-
             const deleteBtn = e.target.closest('.delete-btn');
 
             if (deleteBtn) {
@@ -121,55 +120,107 @@ document.addEventListener('DOMContentLoaded', function () {
                 const username = row.querySelector('.fw-semibold').textContent;
                 const userIdText = row.querySelector('td:first-child').textContent.replace('#', '').trim();
 
-                const isConfirmed = confirm(`Are you sure you want to delete user "${username}"?\n\nThis action cannot be undone.`);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You are about to delete user "${username}". This action cannot be undone!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#0077b6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
 
-                if (isConfirmed) {
-                    let basePath = typeof contextPath !== 'undefined' ? contextPath : '/oceanViewResort_war_exploded';
-                    const deleteUrl = window.location.origin + basePath + `/api/v1/admin/users/${userIdText}`;
+                    if (result.isConfirmed) {
+                        let basePath = typeof contextPath !== 'undefined' ? contextPath : '/oceanViewResort_war_exploded';
+                        const deleteUrl = window.location.origin + basePath + `/api/v1/admin/users/${userIdText}`;
 
-                    fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => { throw new Error(err.message || 'Failed to delete user.'); }).catch(() => { throw new Error('Failed to delete user'); });
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
                             }
-
-                            row.style.opacity = '0';
-                            row.style.transform = 'translateX(20px)';
-                            row.style.transition = 'all 0.3s ease';
-
-                            setTimeout(() => {
-                                row.remove();
-                                alert(`User ${username} has been deleted.`);
-                            }, 300);
-                        })
-                        .catch(error => {
-                            console.error('Delete error:', error);
-
-                            alert('User deleted (Simulation - API endpoint might not be fully implemented).');
-                            row.remove();
                         });
-                }
+
+                        fetch(deleteUrl, {
+                            method: 'DELETE',
+                            headers: {
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(err => { throw new Error(err.message || 'Failed to delete user.'); }).catch(() => { throw new Error('Failed to delete user'); });
+                                }
+
+                                row.style.opacity = '0';
+                                row.style.transform = 'translateX(20px)';
+                                row.style.transition = 'all 0.3s ease';
+
+                                setTimeout(() => {
+                                    row.remove();
+
+                                }, 300);
+
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: `User "${username}" has been deleted successfully.`,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#4BD3E5'
+                                });
+
+                            })
+                            .catch(error => {
+                                console.error('Delete error:', error);
+
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: error.message || 'Something went wrong. Could not delete the user.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#0077b6'
+                                });
+
+
+                            });
+                    }
+                });
             }
         });
     }
 
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
-            const confirmLogout = confirm("Are you sure you want to logout of Ocean View Resort Admin Panel?");
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
 
-            if (confirmLogout) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('username');
-                localStorage.removeItem('userId');
+            Swal.fire({
+                title: 'Ready to Leave?',
+                text: 'Are you sure you want to logout of Ocean View Resort Admin Panel?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#0077b6',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userId');
 
-                window.location.href = 'index.jsp';
-            }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logged Out',
+                        text: 'You have been successfully logged out.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.jsp';
+                    });
+                }
+            });
         });
     }
 });

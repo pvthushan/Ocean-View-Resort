@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const accordionButtons = document.querySelectorAll('.accordion-button');
     accordionButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Scroll slightly to ensure header is visible after collapse/expand
             setTimeout(() => {
                 const rect = this.parentElement.getBoundingClientRect();
                 if (rect.top < 100) {

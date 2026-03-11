@@ -38,17 +38,35 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            const confirmLogout = confirm("Are you sure you want to logout of Ocean View Resort Admin Panel?");
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
 
-            if (confirmLogout) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('username');
-                localStorage.removeItem('userId');
+            Swal.fire({
+                title: 'Ready to Leave?',
+                text: 'Are you sure you want to logout of the Ocean View Resort Admin Panel?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#0077b6',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userId');
 
-                window.location.href = 'index.jsp';
-            }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logged Out',
+                        text: 'You have been successfully logged out.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.jsp';
+                    });
+                }
+            });
         });
     }
 
@@ -99,8 +117,16 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error("API Fetch Error Details:", error);
+
                 const totalUsersElement = document.getElementById('totalUsersCount');
                 if(totalUsersElement) totalUsersElement.innerHTML = '<span class="text-danger fs-5">Error</span>';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Data Load Failed',
+                    text: 'Could not fetch user statistics from the database. Please check your connection.',
+                    confirmButtonColor: '#0077b6'
+                });
             });
     }
 

@@ -45,8 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('pageTitle').textContent = 'Update User Account';
         document.querySelector('.card-header h5').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Update Details';
         document.getElementById('submitBtn').innerHTML = '<i class="bi bi-save me-2"></i> Update Account';
-
-
     }
 
     const togglePassword = document.getElementById('togglePassword');
@@ -69,122 +67,170 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const form = document.getElementById('createUserForm');
-    const alertPlaceholder = document.getElementById('formAlert');
 
     if(form) {
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            alertPlaceholder.innerHTML = '';
-
             const username = document.getElementById('usernameInput').value.trim();
             const password = document.getElementById('passwordInput').value;
             const role = document.getElementById('roleInput').value;
 
-            let isValid = true;
-
             if (username === '') {
-                showAlert('Please enter a username.', 'warning');
-                isValid = false;
-            } else if (password === '' && !editId) {
-                showAlert('Please enter a password.', 'warning');
-                isValid = false;
-            } else if (password !== '' && password.length < 6) {
-                showAlert('Password must be at least 6 characters long.', 'warning');
-                isValid = false;
-            } else if (!role || role === '') {
-                showAlert('Please select a user role.', 'warning');
-                isValid = false;
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Username',
+                    text: 'Please enter a username.',
+                    confirmButtonColor: '#0077b6'
+                });
+                return;
             }
 
-            if (isValid) {
-                const submitBtn = document.getElementById('submitBtn');
-                const originalText = submitBtn.innerHTML;
+            if (password === '' && !editId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Password',
+                    text: 'Please enter a password.',
+                    confirmButtonColor: '#0077b6'
+                });
+                return;
+            }
 
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+            if (password !== '' && password.length < 6) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Weak Password',
+                    text: 'Password must be at least 6 characters long.',
+                    confirmButtonColor: '#0077b6'
+                });
+                return;
+            }
 
-                const userData = {
-                    username: username,
-                    password: password,
-                    role: role
-                };
+            if (!role || role === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Role',
+                    text: 'Please select a user role.',
+                    confirmButtonColor: '#0077b6'
+                });
+                return;
+            }
 
-                let API_URL = window.location.origin + contextPath + '/api/v1/admin/users';
-                let httpMethod = 'POST';
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
 
-                if (editId) {
-                    API_URL = API_URL + '/' + editId;
-                    httpMethod = 'PUT';
-                    if (password === '') {
-                        delete userData.password;
-                    }
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+
+            Swal.fire({
+                title: editId ? 'Updating User...' : 'Creating User...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
+            });
 
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                if (token) headers['Authorization'] = `Bearer ${token}`;
+            const userData = {
+                username: username,
+                password: password,
+                role: role
+            };
 
-                fetch(API_URL, {
-                    method: httpMethod,
-                    headers: headers,
-                    body: JSON.stringify(userData)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.error || err.message || 'Operation failed. Please try again.');
-                            }).catch(() => {
-                                throw new Error('Failed to process request. Please check your connection.');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        if (editId) {
-                            showAlert(`Success! User account for <strong>${username}</strong> has been updated.`, 'success');
-                        } else {
-                            showAlert(`Success! User <strong>${username}</strong> has been created as a ${role}.`, 'success');
-                            form.reset();
-                        }
-                    })
-                    .catch(error => {
-                        showAlert(error.message, 'danger');
-                    })
-                    .finally(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                    });
+            let API_URL = window.location.origin + contextPath + '/api/v1/admin/users';
+            let httpMethod = 'POST';
+
+            if (editId) {
+                API_URL = API_URL + '/' + editId;
+                httpMethod = 'PUT';
+                if (password === '') {
+                    delete userData.password;
+                }
             }
-        });
-    }
 
-    function showAlert(message, type) {
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = [
-            `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
-            `   <div>${message}</div>`,
-            `   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`,
-            `</div>`
-        ].join('');
-        alertPlaceholder.append(wrapper);
+            fetch(API_URL, {
+                method: httpMethod,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || err.message || 'Operation failed. Please try again.');
+                        }).catch(() => {
+                            throw new Error('Failed to process request. Please check your connection.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: editId ? 'Updated!' : 'Created!',
+                        html: editId
+                            ? `User account for <strong>${username}</strong> has been updated.`
+                            : `User <strong>${username}</strong> has been successfully created as a ${role}.`,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#4BD3E5'
+                    }).then((result) => {
+                        if (result.isConfirmed || result.isDismissed) {
+                            if (!editId) {
+                                form.reset();
+                            } else {
+                                window.location.href = 'manageUser.jsp';
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: error.message,
+                        confirmButtonColor: '#0077b6'
+                    });
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
+        });
     }
 
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
-            const confirmLogout = confirm("Are you sure you want to logout of Ocean View Resort Admin Panel?");
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
 
-            if (confirmLogout) {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('username');
-                localStorage.removeItem('userId');
+            Swal.fire({
+                title: 'Ready to Leave?',
+                text: 'Are you sure you want to logout of Ocean View Resort Admin Panel?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#0077b6',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userId');
 
-                window.location.href = 'index.jsp';
-            }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Logged Out',
+                        text: 'You have been successfully logged out.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.jsp';
+                    });
+                }
+            });
         });
     }
 });

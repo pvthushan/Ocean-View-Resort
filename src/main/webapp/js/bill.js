@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const taxRate = 0.10;
 
-    if(generateBtn) generateBtn.addEventListener('click', generateInvoice);
+    if(generateBtn) {
+        generateBtn.addEventListener('click', generateInvoice);
+    }
+
     if(resIdInput) {
         resIdInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') generateInvoice();
@@ -26,13 +29,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = resIdInput.value.trim().toUpperCase();
 
         if (!query) {
-            alert("Please enter a Reservation ID.");
-            resIdInput.focus();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing ID',
+                text: 'Please enter a Reservation ID to generate the invoice.',
+                confirmButtonColor: '#0077b6'
+            }).then(() => {
+                resIdInput.focus();
+            });
             return;
         }
 
         generateBtn.disabled = true;
-        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        const originalBtnText = generateBtn.innerHTML;
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Searching...';
         invoiceSection.classList.add('d-none');
 
         let basePath = typeof contextPath !== 'undefined' ? contextPath : '/oceanViewResort_war_exploded';
@@ -53,15 +63,25 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 if (error.message === 'NOT_FOUND') {
-                    alert(`Reservation ID ${query} not found.`);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Not Found',
+                        text: `Reservation ID ${query} could not be found. Please check the ID and try again.`,
+                        confirmButtonColor: '#0077b6'
+                    });
                 } else {
                     console.error("API Error:", error);
-                    alert("Something went wrong while fetching data.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'System Error',
+                        text: 'Something went wrong while fetching the invoice data.',
+                        confirmButtonColor: '#0077b6'
+                    });
                 }
             })
             .finally(() => {
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = 'Generate Invoice';
+                generateBtn.innerHTML = originalBtnText;
             });
     }
 
@@ -127,47 +147,86 @@ document.addEventListener('DOMContentLoaded', function() {
             let currentResId = document.getElementById('invoiceResId').textContent;
             currentResId = currentResId.replace('#', '').trim();
 
-            const confirmMsg = `Confirm Checkout for ${guest}?\n\nTotal Amount: ${total}\nPayment Method: ${method}\n\nThis action cannot be undone.`;
+            Swal.fire({
+                title: 'Confirm Checkout?',
+                html: `
+                    <div style="text-align: left;">
+                        <p>Are you sure you want to complete the checkout for <strong>${guest}</strong>?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><strong>Total Amount:</strong> <span class="text-success">${total}</span></li>
+                            <li><strong>Payment Method:</strong> ${method}</li>
+                        </ul>
+                        <p class="text-danger small mb-0"><i class="bi bi-exclamation-triangle me-1"></i> This action cannot be undone.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Complete Checkout'
+            }).then((result) => {
 
-            if (confirm(confirmMsg)) {
-                checkoutBtn.disabled = true;
-                checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+                if (result.isConfirmed) {
 
-                const requestBody = {
-                    reservationId: currentResId,
-                    paymentMethod: method
-                };
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
 
-                let basePath = typeof contextPath !== 'undefined' ? contextPath : '/oceanViewResort_war_exploded';
-
-                const postUrl = window.location.origin + basePath + '/api/v1/reception/checkout';
-
-                fetch(postUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Checkout failed');
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert("Checkout Completed Successfully! Reservation updated.");
-                        resIdInput.value = '';
-                        invoiceSection.classList.add('d-none');
-                        resIdInput.focus();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Failed to complete checkout. Please check the console for details.");
-                    })
-                    .finally(() => {
-                        checkoutBtn.disabled = false;
-                        checkoutBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Complete Checkout';
+                    Swal.fire({
+                        title: 'Processing Payment...',
+                        text: 'Please wait while we finalize the checkout.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
-            }
+
+                    const requestBody = {
+                        reservationId: currentResId,
+                        paymentMethod: method
+                    };
+
+                    let basePath = typeof contextPath !== 'undefined' ? contextPath : '/oceanViewResort_war_exploded';
+                    const postUrl = window.location.origin + basePath + '/api/v1/reception/checkout';
+
+                    fetch(postUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Checkout failed');
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Checkout Completed!',
+                                text: `Payment of ${total} received via ${method}. Reservation #${currentResId} is now closed.`,
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#4BD3E5'
+                            }).then(() => {
+                                resIdInput.value = '';
+                                invoiceSection.classList.add('d-none');
+                                resIdInput.focus();
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Checkout Failed',
+                                text: 'Failed to complete the checkout process. Please check your connection or try again.',
+                                confirmButtonColor: '#0077b6'
+                            });
+                        })
+                        .finally(() => {
+                            checkoutBtn.disabled = false;
+                            checkoutBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Complete Checkout';
+                        });
+                }
+            });
         });
     }
 

@@ -201,7 +201,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
 
-            // Format with commas (e.g., 1,320.00)
             const currentValue = (progress * (end - start) + start);
             obj.innerHTML = currentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 

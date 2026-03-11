@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function performSearch() {
-        // ID eka gannawa (Spaces ain karala, Uppercase karala)
         const query = searchInput.value.trim().toUpperCase();
 
         if (!query) {
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('displayCheckIn').textContent = data.booking?.checkInDate || '-';
         document.getElementById('displayCheckOut').textContent = data.booking?.checkOutDate || '-';
 
-        const status = data.status || 'Confirmed'; // Default fallback
+        const status = data.status || 'Confirmed';
         const badge = document.getElementById('statusBadge');
         badge.textContent = status;
 
